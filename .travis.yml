@@ -1,0 +1,20 @@
+services:
+- docker
+script:
+- docker build -t wtanaka/ubuntu-1604-oracle-java-9 .
+- >
+  docker run wtanaka/ubuntu-1604-oracle-java-9 java -version
+  2>&1 | grep 'java version "9.'
+# Make sure it is still possible to use apt
+- >
+  docker run wtanaka/ubuntu-1604-oracle-java-9 sh -c "apt-get update && apt-get install less"
+after_success:
+- >
+  curl -H "Content-Type: application/json"
+  --data '{"source_type": "Branch", "source_name": "master"}'
+  -X POST
+  https://registry.hub.docker.com/u/wtanaka/ubuntu-1604-oracle-java-9/trigger/67f1f6fc-05c8-4bcc-90fb-0b3b180c34f6/
+notifications:
+  email:
+    recipients:
+      secure: 1ZAG5uAoXS7/Gjd7Q9RUQMkZl41lk+KF3i5ydsln7NlwNVw0JHH/0yKVMRrv2G5QTAkoiMf1P0qCbbCO8IzsT8pblUflBzttOUbZ2tFPYyHqT6PQKERtndHHAzILo+LJ7Ph0mUXb0ORhu7GjJNKnFOv6UIkhBam/ujuMl7MWZrjCCxTYXOCDLBFHf2uqaHldSvXUE43q0Z/FuZZJ4Bk5nv+KsMWdWi9cm1k/j+0nLqMR30OAtXXhEPK2Ws1vNNvdFrNgefIxV/ElWgVaNIWfYTJrHuNeRBp4QvMsT9Y7ZJ+xkzmG4HgqlNUCx778K2UVadXsg0FsyfoNLuYtSGAYkfil3jO2Tl0QOrIDcjcblDrkqEBRcMk92KHd15RQtJoTtqalYtNAIw0ls8/MYGddTSwc/bPoRwHCY4l5HdEsrX303KAoeQilDdeoNXoHoMbeDNzyLrmbB1fRbQgVePODsgjPJHT51PSRcMcdvKSXT32pk8JNqJK5oDcjUhjjjtTij7ct7rJlr01IVSTHu7agXHvrCFHGAa69fs3VTrJm9YnvlWwlPhTyFCNbTWzwuaWTzXXjqMtlpJlP1zGv+tiwC1Wm+CpOxyPsrMuZJ0ItFaZueS0HCUJKrbgsVUxe0fBXAKOGcQg3SPprB0At06m+VRMPnbXush1eTA8MlU12Oy8=
